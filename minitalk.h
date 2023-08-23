@@ -9,8 +9,14 @@
 # include "42-Libft/libft/libft.h"
 
 
-void action_handler(int signum);
+
+void client_signal_handler(int signum);
+void action_handler(int signum, siginfo_t *source, void *context);
 void init(int *server_pid, char **str, int argc, char *argv[]);
 void    send_message(char *str, int pid);
 
 #endif
+
+// TODO: fix memory leaks
+// Readable code (norminette)
+// Possible bugs: passing incorrect values

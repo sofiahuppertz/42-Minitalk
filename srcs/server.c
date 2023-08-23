@@ -1,13 +1,14 @@
 #include "../minitalk.h"
 
 volatile uint16_t state;
-//upper 8 bits are the count of bits received
-//lower 8 bits are the byte being received
+
 
 int main(void)
 {
     struct sigaction action;
     sigset_t mask_set;
+    int time_passed;
+    int time_limit;
     int i;
     int pid;
 
@@ -23,24 +24,32 @@ int main(void)
             sigaddset(&mask_set, i);
         i += 1;
     }
-    action.sa_handler = action_handler;
-    action.sa_flags = SA_RESTART;
+    action.sa_sigaction = action_handler;
+    action.sa_flags = SA_RESTART |  SA_SIGINFO | SA_NODEFER;
     action.sa_mask = mask_set;
 
     sigaction(SIGUSR1, &action, NULL);
     sigaction(SIGUSR2, &action, NULL);
-    while (1)
+
+    time_passed = 0;
+    time_limit = 360;
+    while (time_passed < time_limit)
     {
-        pause();
+        sleep(1);
+        time_passed += 1;
     }
+    return (0);
 }
 
 
-void action_handler(int signum)
+void action_handler(int signum, siginfo_t *source, void *context)
 {
     u_int16_t bit;
     u_int8_t count;
+    static int sender_id;
 
+    (void)context;
+    kill(source->si_pid, signum);
     bit = signum == SIGUSR1 ? 0 : 1;
     count = (state >> 8) & 0xFF;
     state = state | (bit << count);
@@ -48,11 +57,15 @@ void action_handler(int signum)
     state = (state & 0x00FF) | (count << 8); //first clear state... then add count.
     if (count == 8)
     {
+        if (sender_id != 0 && sender_id != source->si_pid)
+        {
+            ft_printf("\n"); 
+            sender_id = source->si_pid;
+        }
+        if (sender_id == 0)
+            sender_id = source->si_pid;
+
         ft_printf("%c", (char)state & 0x00FF);
         state = 0;
     }
 }
-//count skips 5 and 6.
-//maybe it is wronlgy stored into the state variable
-//not sure if the bits are being stored backwards. I receive first lsb. Probably ok...
-//Program isn't reading the character.
