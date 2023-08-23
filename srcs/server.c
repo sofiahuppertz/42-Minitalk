@@ -39,16 +39,20 @@ int main(void)
 void action_handler(int signum)
 {
     u_int16_t bit;
-    u_int16_t count;
+    u_int8_t count;
 
     bit = signum == SIGUSR1 ? 0 : 1;
     count = (state >> 8) & 0xFF;
     state = state | (bit << count);
     count += 1;
-    state = state | count << 8;
+    state = (state & 0x00FF) | (count << 8); //first clear state... then add count.
     if (count == 8)
     {
-        ft_printf("%c", state & 0xFF);
+        ft_printf("%c", (char)state & 0x00FF);
         state = 0;
-    }    
+    }
 }
+//count skips 5 and 6.
+//maybe it is wronlgy stored into the state variable
+//not sure if the bits are being stored backwards. I receive first lsb. Probably ok...
+//Program isn't reading the character.

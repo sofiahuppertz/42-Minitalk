@@ -32,8 +32,9 @@ void    send_message(char *str, int pid)
                 kill(pid, SIGUSR2);
             byte = byte >> 1;
             bit += 1;
-            usleep(1500);
+            usleep(1000);
         }
+        i++;
     }
     exit(0);
-}
+} 
