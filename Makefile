@@ -5,8 +5,8 @@ LIBFT = 42-Libft/libft/libft.a
 INCLUDE = -I./ -I/42-Libft/Libft
 CFLAGS = -Wall -Wextra -Werror
 
-SERVER_SRCS = $(addprefix srcs/, server.c)
-CLIENT_SRCS = $(addprefix srcs/, client.c client_utils.c)
+SERVER_SRCS = $(addprefix srcs/, server.c server_utils.c common_utils.c)
+CLIENT_SRCS = $(addprefix srcs/, client.c client_utils.c common_utils.c)
 
 C_OBJS =  $(CLIENT_SRCS:.c=.o)
 S_OBJS = $(SERVER_SRCS:.c=.o)

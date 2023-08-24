@@ -10,13 +10,16 @@
 
 
 
-void client_signal_handler(int signum);
-void action_handler(int signum, siginfo_t *source, void *context);
-void init(int *server_pid, char **str, int argc, char *argv[]);
-void    send_message(char *str, int pid);
+void    server_sighandler(int signum, siginfo_t *source, void *context);
+void client_sighandler(int signum, siginfo_t *source, void *context);
+int     init(int *server_pid, char **str, int argc, char *argv[]);
+int     print_pid(void);
+int     send_message(char *str, int pid);
+int set_signal_handler(struct sigaction *action, void (*f)(int, siginfo_t *, void *));
+int     wait_for_signal(void);
 
 #endif
 
 // TODO: fix memory leaks
-// Readable code (norminette)
-// Possible bugs: passing incorrect values
+// Norminette
+// Test bugs

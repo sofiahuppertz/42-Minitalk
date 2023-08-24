@@ -1,6 +1,6 @@
 #include "../minitalk.h"
 
-void init(int *server_pid, char **str, int argc, char *argv[])
+int init(int *server_pid, char **str, int argc, char *argv[])
 {
     if (argc != 3)
     {
@@ -9,32 +9,42 @@ void init(int *server_pid, char **str, int argc, char *argv[])
     }
     *server_pid = ft_atoi(argv[1]);
     *str = ft_strdup(argv[2]);
+    return(1);
 }
 
-void    send_message(char *str, int pid)
+void client_sighandler(int signum, siginfo_t *source, void *context)
 {
-    unsigned char byte;
-    int bit;
-    int i;
-    int lsb;
+    (void)source;
+    (void)context;
+    if (signum == SIGUSR1)
+        ft_printf("received bit: 0\n");
+    else
+        ft_printf("received bit: 1\n");
+}
 
-    i = 0;
-    while (str[i])
+
+int    send_message(char *str, int s_pid)
+{
+    unsigned char character;
+    int bits_count;
+    int l_s_b;
+
+    while (*str)
     {
-        byte = str[i];
-        bit = 0;
-        while (bit < 8)
+        character = *str;
+        bits_count = 0;
+        while (bits_count < 8)
         {
-            lsb = byte & 1;
-            if (lsb == 0)
-                kill(pid, SIGUSR1);
-            if (lsb == 1)
-                kill(pid, SIGUSR2);
-            byte = byte >> 1;
-            bit += 1;
+            l_s_b = character & 1;
+            if (l_s_b == 0)
+                kill(s_pid, SIGUSR1);
+            if (l_s_b == 1)
+                kill(s_pid, SIGUSR2);
+            character = character >> 1;
+            bits_count += 1;
             usleep(1000);
         }
-        i++;
+        str++;
     }
-    exit(0);
+    return(1);
 } 
