@@ -6,7 +6,7 @@
 /*   By: shuppert <shuppert@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/27 11:47:04 by shuppert          #+#    #+#             */
-/*   Updated: 2023/08/27 13:13:46 by shuppert         ###   ########.fr       */
+/*   Updated: 2023/08/28 16:30:41 by shuppert         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,6 @@ int	main(int argc, char *argv[])
 	init(&server_pid, &str, argc, argv);
 	set_signal_handler(&c_handler, client_sighandler);
 	send_message(str, server_pid);
+	free(str);
 	exit(0);
 }
